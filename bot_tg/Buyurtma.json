@@ -1,0 +1,60 @@
+{
+    "🌯Lavash": {
+        "🌯Obichniy": {
+            "narx": 35000,
+            "original_price": 35000,
+            "son": 0,
+            "available": true
+        }
+    },
+    "🍔Donar": {
+        "🍔 Donar": {
+            "narx": 30000,
+            "original_price": 30000,
+            "son": 0,
+            "available": true
+        }
+    },
+    "🌭Hotdog": {
+        "🌭 Mesnoy kichkina": {
+            "narx": 10000,
+            "original_price": 10000,
+            "son": 0,
+            "available": true
+        },
+        "🌭 Mesnoy o'rtacha": {
+            "narx": 15000,
+            "original_price": 15000,
+            "son": 0,
+            "available": true
+        },
+        "🌭 Mesnoy katta": {
+            "narx": 20000,
+            "original_price": 20000,
+            "son": 0,
+            "available": true
+        },
+        "🌭 Mesnoy qazili": {
+            "narx": 25000,
+            "original_price": 25000,
+            "son": 0,
+            "available": true
+        }
+    },
+    "🥤Ichimlik": {
+        "🥤  0.5 L Cola": {
+            "narx": 8000,
+            "original_price": 8000,
+            "son": 0,
+            "available": true
+        }
+    },
+    "🥙Non kabob": {
+        "🥙Non kabob": {
+            "narx": 35000,
+            "original_price": 35000,
+            "son": 0,
+            "available": true
+        }
+    }
+}
