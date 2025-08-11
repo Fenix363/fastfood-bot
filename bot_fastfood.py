@@ -1,6 +1,10 @@
 import json
 import os
 import asyncio
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from dotenv import load_dotenv
+
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from telegram.ext import (
     ApplicationBuilder,
@@ -11,9 +15,10 @@ from telegram.ext import (
 from urllib.parse import quote, unquote
 from functools import wraps
 
+load_dotenv()
 
-API_TOKEN = '7456446215:AAGo6DuE3d6cIGIUZVxm3AgEqo7JkN0zYuw'  # tokenni almashtiring
-ADMIN_ID =6957782138
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 
 FILE_PATH = "Buyurtma.json"
 HISTORY_FILE = "Eski.json"
@@ -132,7 +137,7 @@ def main():
             }
         }
 
-    app = ApplicationBuilder().token(API_TOKEN).build()
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     # ✅ Admin tugmalari uchun handlerlar — AVVAL turishi kerak
     app.add_handler(CallbackQueryHandler(admin_button_handler, pattern="^admin_"))
@@ -1069,6 +1074,21 @@ def remove_all_discounts():
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Noma'lum buyruq. /menyu orqali menyuni ko'ring.")
 
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/health":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"OK")
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+def run_server():
+    port = int(os.environ.get("PORT", 5000))
+    server = HTTPServer(("0.0.0.0", port), HealthHandler)
+    server.serve_forever()
 
 if __name__ == "__main__":
+    threading.Thread(target=run_server, daemon=True).start()
     main()
