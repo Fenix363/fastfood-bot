@@ -1107,7 +1107,6 @@ class HealthHandler(BaseHTTPRequestHandler):
         self.send_response(404)
         self.end_headers()
 
-
 def run_server():
     port = int(os.environ.get("PORT", 5000))
     server = HTTPServer(("0.0.0.0", port), HealthHandler)
