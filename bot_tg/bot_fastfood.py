@@ -1092,6 +1092,22 @@ class HealthHandler(BaseHTTPRequestHandler):
             self.send_response(404)
             self.end_headers()
 
+    def do_HEAD(self):
+        # HEAD so'rovlarga ham 200 javob qaytaramiz
+        if self.path == "/health":
+            self.send_response(200)
+            self.end_headers()
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self):
+        # Agar POST metodini ham qo'llab-quvvatlamoqchi bo'lsangiz,
+        # unga mos javob qaytaring yoki 404 qiling
+        self.send_response(404)
+        self.end_headers()
+
+
 def run_server():
     port = int(os.environ.get("PORT", 5000))
     server = HTTPServer(("0.0.0.0", port), HealthHandler)
