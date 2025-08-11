@@ -1,6 +1,10 @@
 import json
 import os
 import asyncio
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from dotenv import load_dotenv
+
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from telegram.ext import (
     ApplicationBuilder,
@@ -11,9 +15,10 @@ from telegram.ext import (
 from urllib.parse import quote, unquote
 from functools import wraps
 
+load_dotenv()
 
-API_TOKEN = '7456446215:AAGo6DuE3d6cIGIUZVxm3AgEqo7JkN0zYuw'  # tokenni almashtiring
-ADMIN_ID =6957782138
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 
 FILE_PATH = "Buyurtma.json"
 HISTORY_FILE = "Eski.json"
@@ -113,14 +118,22 @@ def main():
                     "available": True
                 }
             },
-            "🥤Ichimlik": {
-                "🥤  0.5 L Cola": {
-                    "narx": 8000,
-                    "original_price": 8000,
-                    "son": 0,
-                    "available": True
-                },
-                # ... qolgan ichimliklar ...
+            "Ichimlik": {
+                "🥤  0.5 L Cola": {"narx": 8000, "original_price": 8000, "son": 0},
+                "🥤  0.5 L fanta": {"narx": 8000, "original_price": 8000, "son": 0},
+                "🥤  1 L Cola": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🥤  1 L fanta": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🥤  1.5 L Cola": {"narx": 15000, "original_price": 15000, "son": 0},
+                "🥤  1.5 L fanta": {"narx": 15000, "original_price": 15000, "son": 0},
+                "🥤⚡ Flesh": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🥤⚡ Gorila": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🥤⚡ 18+": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🧋  Moxito laym": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🧋  Moxito Qulubnika": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🧋  Moxito ananas": {"narx": 13000, "original_price": 13000, "son": 0},
+                "🧊🍹0.5 L Ays tea": {"narx": 6000, "original_price": 6000, "son": 0},
+                "🧊🍹1.25 L Ays tea": {"narx": 12000, "original_price": 12000, "son": 0},
+                "🧃  1 L Dena sok": {"narx": 15000, "original_price": 15000, "son": 0}
             },
             "🥙Non kabob": {
                 "🥙Non kabob": {
@@ -132,7 +145,7 @@ def main():
             }
         }
 
-    app = ApplicationBuilder().token(API_TOKEN).build()
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     # ✅ Admin tugmalari uchun handlerlar — AVVAL turishi kerak
     app.add_handler(CallbackQueryHandler(admin_button_handler, pattern="^admin_"))
@@ -1069,6 +1082,21 @@ def remove_all_discounts():
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Noma'lum buyruq. /menyu orqali menyuni ko'ring.")
 
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/health":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"OK")
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+def run_server():
+    port = int(os.environ.get("PORT", 5000))
+    server = HTTPServer(("0.0.0.0", port), HealthHandler)
+    server.serve_forever()
 
 if __name__ == "__main__":
+    threading.Thread(target=run_server, daemon=True).start()
     main()
